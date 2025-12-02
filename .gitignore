@@ -1,3 +1,21 @@
+# Allow .gitkeep placeholders so empty directories are preserved
+!.gitkeep
+!**/.gitkeep
+!/input_videos/.gitkeep
+!/input_videos_1/.gitkeep
+!/output_videos/.gitkeep
+!/output_videos_1/.gitkeep
+!/output_videos_latest/.gitkeep
+!/output/.gitkeep
+!/outputs/.gitkeep
+!/results/.gitkeep
+!/result_images/.gitkeep
+!/restored/.gitkeep
+!/models/.gitkeep
+!/checkpoints/.gitkeep
+!/cache/.gitkeep
+!/data/.gitkeep
+!/batch_uploads/.gitkeep
 # Python
 __pycache__/
 *.py[cod]
@@ -32,22 +50,20 @@ venv*/
 *.pb
 
 # Large data / outputs (keep folder structure; ignore file contents)
-/input_videos/
-/input_videos_1/
-/output_videos/
-/output_videos_1/
-/output_videos_latest/
-/output_videos_latest/**
-/output/
-/outputs/
-/output_videos_latest/**
-/results/
-/result_images/
-/restored/
-/models/
-/checkpoints/
-/cache/
-/data/
+/input_videos/*
+/input_videos_1/*
+/output_videos/*
+/output_videos_1/*
+/output_videos_latest/*
+/output/*
+/outputs/*
+/results/*
+/result_images/*
+/restored/*
+/models/*
+/checkpoints/*
+/cache/*
+/data/*
 
 # Common media / archives
 *.mp4
