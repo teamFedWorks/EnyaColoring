@@ -1,0 +1,96 @@
+#!/bin/bash
+set -e
+
+# Load Conda
+source /opt/conda/etc/profile.d/conda.sh
+conda activate dl_env
+
+echo ""
+echo "=============================================="
+echo " 🚀 Container Startup Initialized"
+echo "=============================================="
+
+# Get container IP
+CONTAINER_IP=$(hostname -I | awk '{print $1}')
+
+echo "📌 Active Conda Env : dl_env"
+echo "📁 Working Directory: /workspace"
+echo "🌎 Container IP     : $CONTAINER_IP"
+echo ""
+
+# =====================================================
+# Upgrade yt-dlp
+# =====================================================
+echo "⬆️  Upgrading yt-dlp ..."
+pip install -U yt-dlp >/dev/null 2>&1
+echo "✅ yt-dlp upgraded"
+echo ""
+
+pip install flask flask-cors >/dev/null 2>&1
+echo "✅ Flask + Flask-CORS installed"
+
+# =====================================================
+# Fix protobuf version
+# =====================================================
+echo "🔧 Adjusting protobuf version..."
+pip uninstall -y protobuf >/dev/null 2>&1 || true
+pip install protobuf==5.28.3 >/dev/null 2>&1
+echo "✅ Protobuf patched (v5.28.3)"
+echo ""
+
+# =====================================================
+# Start Remote API (Python script, not uvicorn)
+# =====================================================
+echo "=== 🚀 Starting Remote API Server on port 9090 ==="
+python /workspace/remote_api_server.py --host 0.0.0.0 --port 9090 \
+    > /workspace/remote_api.log 2>&1 &
+
+REMOTE_API_PID=$!
+echo "✅ Remote API running (PID: $REMOTE_API_PID)"
+echo "📄 Logs: /workspace/remote_api.log"
+echo "🌐 URL : http://$CONTAINER_IP:9090"
+echo ""
+
+# =====================================================
+# Start ComfyUI
+# =====================================================
+echo "=== 🎨 Starting ComfyUI on port 8188 ==="
+python /opt/comfyui/main.py --listen 0.0.0.0 --port 8188 \
+    > /workspace/comfyui.log 2>&1 &
+
+COMFY_PID=$!
+echo "✅ ComfyUI running    (PID: $COMFY_PID)"
+echo "📄 Logs: /workspace/comfyui.log"
+echo "🌐 URL : http://$CONTAINER_IP:8188"
+echo ""
+
+# Cleanup on container exit
+cleanup() {
+  echo "🛑 Stopping ComfyUI (PID: $COMFY_PID)"
+  kill -TERM "$COMFY_PID" 2>/dev/null || true
+  wait "$COMFY_PID" 2>/dev/null || true
+
+  echo "🛑 Stopping Remote API (PID: $REMOTE_API_PID)"
+  kill -TERM "$REMOTE_API_PID" 2>/dev/null || true
+  wait "$REMOTE_API_PID" 2>/dev/null || true
+}
+trap cleanup EXIT
+
+# =====================================================
+# Start Jupyter Lab
+# =====================================================
+echo "=== 📘 Launching Jupyter Lab on port 8888 ==="
+echo "📄 Jupyter will load app.ipynb on startup"
+echo "🌐 URL: http://$CONTAINER_IP:8888/lab/tree/app.ipynb"
+echo ""
+
+exec jupyter lab \
+  --ip=0.0.0.0 \
+  --port=8888 \
+  --allow-root \
+  --NotebookApp.token='' \
+  --NotebookApp.password='' \
+  --notebook-dir=/workspace \
+  --NotebookApp.default_url="/lab/tree/app.ipynb"
+
+

@@ -1,0 +1,43 @@
+version: "3.8"
+
+services:
+  pipeline:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pipeline_v1
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    command: sh -c ./entrypoint.sh
+    volumes:
+      - .:/workspace
+      - ./models:/workspace/models
+      - ./models/models:/workspace/models/models
+      - ./checkpoints:/workspace/checkpoints
+      - ./data:/workspace/data
+      - ./Utils:/workspace/Utils
+      - ./input_videos:/workspace/input_videos
+      - ./output_videos:/workspace/output_videos
+      - ./models/diffusion_models:/opt/comfyui/models/diffusion_models
+      - ./models/vae:/opt/comfyui/models/vae
+      - ./models/loras:/opt/comfyui/models/loras
+      - ./models/text_encoders:/opt/comfyui/models/text_encoders
+      - ./output:/opt/comfyui/output
+    ports:
+      - "8870:8888"
+      - "8288:8188"
+      - "9090:9090"
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+      - HF_HOME=/workspace/models/huggingface
+      - TRANSFORMERS_CACHE=/workspace/models/huggingface/transformers
+      - TORCH_HOME=/workspace/models/torch
+      - OMP_NUM_THREADS=16

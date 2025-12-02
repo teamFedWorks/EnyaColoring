@@ -1,0 +1,3 @@
+YouTube URL,face_upscale,background_upscale,background_upscale_value,unet,crop_video,start_time (00:00:00),end_time (01:22:33),Executed,Start Time,End Time,Remarks,Input Path,clahe
+https://www.youtube.com/watch?v=kvO_nHnvPtQ,nan,nan,nan,nan,nan,nan,nan,Error,2025-11-19T09:38:32.988711,N/A,CUDA error: CUBLAS_STATUS_ALLOC_FAILED when calling `cublasCreate(handle)`,input_videos_1/1secondblackscreenvideo.mp41seco_20251119085659_69d10a9f.mp4,nan
+https://www.youtube.com/watch?v=MvsAesQ-4zA,nan,nan,nan,nan,nan,nan,nan,Yes,2025-11-19T09:38:33.270318,2025-11-19T10:14:22.574782,,input_videos_1/1SecondVideo.mp41SecondVideoMvsA_20251119093836_c3b76340.mp4,nan
