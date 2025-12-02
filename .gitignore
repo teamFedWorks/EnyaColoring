@@ -36,8 +36,11 @@ venv*/
 /input_videos_1/
 /output_videos/
 /output_videos_1/
+/output_videos_latest/
+/output_videos_latest/**
 /output/
 /outputs/
+/output_videos_latest/**
 /results/
 /result_images/
 /restored/
@@ -51,7 +54,7 @@ venv*/
 *.mkv
 *.mov
 *.avi
-*.zip
+*.zip*
 *.tar
 *.gz
 *.rar
@@ -71,6 +74,10 @@ venv*/
 
 # Jupyter notebooks (if you want only code files, uncomment to ignore notebooks)
 # *.ipynb
+
+# Allow placeholder files so directories are present in the repo even when their contents are ignored
+!.gitkeep
+!**/.gitkeep
 
 # Node / tooling
 node_modules/
